@@ -1,0 +1,25 @@
+{% extends 'layout.html' %}
+<head>
+<link rel="stylesheet" type="text/css" href="styles.css">
+</head>
+{% block content %}
+<h3> Welcome to SA Scorer! </h3>
+
+<p> SA Scorer is a web application with the purpose of scoring raw
+    data collected from spontaneous alternation using a 4-armed plus
+    maze. The goal of this app is to streamline and eliminate human
+    error in scoring.
+</p>
+<p> Begin by downloading the
+    <a href="{{url_for('download_template')}}">excel template</a>
+    for data entry. Once you have filled in your raw data, click on
+    the upload file link <a href="{{url_for('upload')}}">here</a> or
+    above in the header. Next upload your completed file and choose
+    whether you would like to score the data from the full 18
+    minutes, the first 6 minutes or the first 12 minutes and press
+    submit and a table of scored data will be returned to you, which
+    you can then download
+{% endblock %}
+
+
+<a href = "{{ url_for('home')}}">Home</a>

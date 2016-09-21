@@ -1,0 +1,21 @@
+<html>
+<head>
+<link rel="stylesheet" type="text/css" href="styles.css"/>
+</head>
+<title>SA scorer</title>
+<div>
+<h1> SA Scorer </h1>
+<a href = "{{ url_for('home')}}">Home</a>
+<a href = "{{ url_for('upload')}}"> Upload-File</a>
+</div>
+<body>
+  {% block content %}
+  {% endblock %}
+</body>
+
+<p class = "footer">
+<small>
+Thank you for using SA scorer. For any questions or comments please contact Andrew Fulton at andrewfulton9+sascorer@gmail.com. Any feedback is much appreciated.
+</small>
+</p>
+</html>

@@ -1,0 +1,8 @@
+{% extends "layout.html" %}
+{% block content %}
+<h1> Scored File </h1>
+    <p>filename: {{ name }}</p>
+    <p>{{ f | safe }} </p>
+    <form action="/download_results" method='post' enctype=multipart/form-data>
+      <input type='submit', value = 'download csv' >
+{% endblock %}

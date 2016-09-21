@@ -1,0 +1,29 @@
+{% extends "layout.html" %}
+{% block content %}
+<h1> Upload New File! </h1>
+{% with messages = get_flashed_messages() %}
+    {% if messages %}
+        <div class = flashes>
+        {% for message in messages %}
+            <p>{{ message }}</p>
+        {% endfor %}
+        </div>
+    {% endif %}
+{% endwith %}
+<form action="upload" method='post' enctype=multipart/form-data>
+  <p> choose file:<br>
+      <input type='file' name='file'><br>
+  </p>
+  <p> Scoring:<br>
+      <input type='radio' name='rescore', value = 'full' checked>
+      score all choices<br>
+      <input type='radio' name='rescore'
+      value = 'score_6'>
+      score choices up to 6 minutes<br>
+      <input type='radio' name='rescore'
+      value = 'score_12'>
+      score choices up to 12 minutes<br>
+  </p>
+  <input type='submit' >
+  </form>
+{% endblock %}
