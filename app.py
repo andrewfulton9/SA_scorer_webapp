@@ -34,7 +34,7 @@ def build_scored_df(filename, rescore=None):
         scored = sa(df, rescore12 = True)
 
     scored = pd.concat([df['group'], weight_percentage, scored], axis=1)
-    scored = scored.dropna(how = 'any', axis = 0)
+    scored = scored.dropna(thresh = 6, axis = 0)
     return scored
 
 @app.route('/', methods = ['GET'])
