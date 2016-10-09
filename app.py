@@ -70,14 +70,18 @@ def results():
     name = session.get('filename')
     rescore = session.get('rescore')
     path = UPLOAD_FOLDER + '/' + name
-    scored_df = build_scored_df(path, rescore = rescore)
-    save_name = 'scored_{}.csv'.format(name[:-5])
-    saved_results = scored_df.to_csv(UPLOAD_FOLDER + '/' + save_name)
-    session['scored_path'] = UPLOAD_FOLDER + '/' + save_name
-    session['scored_filename'] = save_name
-    os.remove(path)
-    return render_template('results.html', name=name,
-                           f = scored_df.to_html())
+    try:
+        scored_df = build_scored_df(path, rescore = rescore)
+        save_name = 'scored_{}.csv'.format(name[:-5])
+        saved_results = scored_df.to_csv(UPLOAD_FOLDER + '/' + save_name)
+        session['scored_path'] = UPLOAD_FOLDER + '/' + save_name
+        session['scored_filename'] = save_name
+        os.remove(path)
+        return render_template('results.html', name=name,
+                               f = scored_df.to_html())
+    except:
+        flash('Please reupload file')
+        return redirect(url_for('upload'))
 
 @app.route('/how_to', methods = ['GET', 'POST'])
 def how_to():
