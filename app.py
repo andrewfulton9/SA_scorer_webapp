@@ -86,7 +86,12 @@ def results():
 @app.route('/download_template', methods = ['GET', 'POST'])
 def download_template():
     return send_file('test_files/excel_template.xlsx',
-                     attachment_filename = 'sa_template')
+                     attachment_filename = 'sa_template.xlsx')
+
+@app.route('/download_example', methods = ['GET', 'POST'])
+def download_example():
+    return send_file('test_files/excel_example.xlsx',
+                     attachment_filename = 'sa_example.xlsx')
 
 @app.route('/download_results', methods = ['GET', 'POST'])
 def download_results():
