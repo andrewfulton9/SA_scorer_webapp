@@ -83,15 +83,28 @@ def results():
         flash('Please reupload file')
         return redirect(url_for('upload'))
 
-@app.route('/download_template', methods = ['GET', 'POST'])
-def download_template():
-    return send_file('test_files/excel_template.xlsx',
-                     attachment_filename = 'sa_template.xlsx')
+# @app.route('/download_template', methods = ['GET', 'POST'])
+# def download_template():
+#     return send_file('test_files/excel_template.xlsx',
+#                      as_attachment = True
+#                      attachment_filename = 'sa_template.xlsx')
 
-@app.route('/download_example', methods = ['GET', 'POST'])
-def download_example():
-    return send_file('test_files/excel_example.xlsx',
-                     attachment_filename = 'sa_example.xlsx')
+# @app.route('/download_example', methods = ['GET','POST'])
+# def download_example():
+#     return send_file('test_files/test.xlsx',
+#                      attachment_filename = 'sa_example.xlsx')
+
+@app.route('/download', methods = ['GET', 'POST'])
+def download():
+    if request.method == 'POST':
+        if request.form['submit'] == 'download example':
+            return send_file('test_files/test.xlsx',
+                             as_attachment = True,
+                             attachment_filename = 'sa_example.xlsx')
+        elif request.form['submit'] == 'download template':
+            return send_file('test_files/excel_template.xlsx',
+                             as_attachment = True,
+                             attachment_filename = 'sa_template.xlsx')
 
 @app.route('/download_results', methods = ['GET', 'POST'])
 def download_results():

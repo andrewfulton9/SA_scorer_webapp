@@ -5,4 +5,47 @@
     <p>{{ f | safe }} </p>
     <form action="/download_results" method='post' enctype=multipart/form-data>
       <input type='submit', value = 'download csv' >
+<br><br><br>
+<h3> Column Descriptions </h3>
+<div>
+<b>group</b>: animals group
+</div>
+<div>
+<b>weight_percentage</b>: percent of max weight at time of testing
+</div>
+<div>
+<b>alternations</b>: total # of alternations
+</div>
+<div>
+<b>arm entries</b>: total arm entries
+</div>
+<div>
+<b>% alternation</b>: alternations divided by arm entries - 3
+</div>
+<div>
+<b>% perseverative errors</b>: number of times a subject entered an arm,
+entered another arm, and then returned to previous arm (ex: 1,2,1)
+divided by arm entries - 2
+</div>
+<div>
+<b>% repeat entries</b>: number of times a subject entered an arm immediatly after
+leaving that same arm without entering another arm in between divided by
+arm entries - 1
+</div>
+<div>
+<b>% 1 entries</b>: number of times subject entered arm 1 divided by arm entries
+</div>
+<div>
+<b>% 2 entries</b>: number of times subject entered arm 2 divided by arm entries
+</div>
+<div>
+<b>% 3 entries</b>: number of times subject entered arm 3 divided by arm entries
+</div>
+<div>
+<b>% 4 entries</b>: number of times subject entered arm 4 divided by arm entries
+</div>
+<div>
+<b>arm entry inequality</b>: the average percent difference from entering each arm 25%
+of the time.
+</div><br><br>
 {% endblock %}
