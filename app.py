@@ -52,16 +52,20 @@ def upload():
         if f.filename == '':
             flash('no selected file')
             return redirect(request.url)
-        if f and allowed_file(f.filename):
-            rescore = request.form['rescore']
-            filename = secure_filename(f.filename)
-            print 'saving file'
-            UPLOAD_FOLDER = tempfile.mkdtemp()
-            session['UPLOAD_FOLDER'] = UPLOAD_FOLDER
-            session['filename'] = filename
-            session['rescore'] = rescore
-            f.save(os.path.join(UPLOAD_FOLDER, filename))
-            return redirect(url_for('results'))
+        if f:
+            if allowed_file(f.filename):
+                rescore = request.form['rescore']
+                filename = secure_filename(f.filename)
+                print 'saving file'
+                UPLOAD_FOLDER = tempfile.mkdtemp()
+                session['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+                session['filename'] = filename
+                session['rescore'] = rescore
+                f.save(os.path.join(UPLOAD_FOLDER, filename))
+                return redirect(url_for('results'))
+            else:
+                flash('improper file type. Must be an Excel file')
+                return redirect(request.url)
     return render_template('upload.html')
 
 @app.route('/results', methods=['GET'])
@@ -83,17 +87,6 @@ def results():
         flash('Please reupload file')
         return redirect(url_for('upload'))
 
-# @app.route('/download_template', methods = ['GET', 'POST'])
-# def download_template():
-#     return send_file('test_files/excel_template.xlsx',
-#                      as_attachment = True
-#                      attachment_filename = 'sa_template.xlsx')
-
-# @app.route('/download_example', methods = ['GET','POST'])
-# def download_example():
-#     return send_file('test_files/test.xlsx',
-#                      attachment_filename = 'sa_example.xlsx')
-
 @app.route('/download', methods = ['GET', 'POST'])
 def download():
     if request.method == 'POST':
@@ -110,13 +103,15 @@ def download():
 def download_results():
     scored_path = session.get('scored_path')
     scored_name = session.get('scored_filename')
-    return send_file(scored_path, attachment_filename=scored_name)
+    return send_file(scored_path,
+                     as_attachment = True,
+                     attachment_filename=scored_name)
 
 
 
 
 if __name__ == '__main__':
-    app.secret_key = 'secretest of keys'
+    app.secret_key = os.environ['SA_SK']
     app.config['SESSION_TYPE'] = 'filesystem'
 
     sess.init_app(app)
