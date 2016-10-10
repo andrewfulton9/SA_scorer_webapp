@@ -83,14 +83,10 @@ def results():
         flash('Please reupload file')
         return redirect(url_for('upload'))
 
-@app.route('/how_to', methods = ['GET', 'POST'])
-def how_to():
-    return render_template('how_to.html')
-
 @app.route('/download_template', methods = ['GET', 'POST'])
 def download_template():
     return send_file('excel_template.xlsx',
-                     attachment_filename = 'input_template')
+                     attachment_filename = 'sa_template')
 
 @app.route('/download_results', methods = ['GET', 'POST'])
 def download_results():
