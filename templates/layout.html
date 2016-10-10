@@ -5,6 +5,10 @@ div.header {
       border: 1px solid gray ;
       text-align: center;
       width: 100%; }
+
+.link-header {
+          padding:10px 10px;
+            }
 .footer {
       background-color: #d0f0f6;
       border: 1px solid gray ;
@@ -22,8 +26,8 @@ div.flashes {
 <title>SA scorer</title>
 <div class = header>
 <h1> SA Scorer </h1>
-<a href = "{{ url_for('home')}}">Home</a>
-<a href = "{{ url_for('upload')}}"> Upload-File</a>
+<a class=link-header href = "{{ url_for('home')}}">Home</a>
+<a class=link-header href = "{{ url_for('upload')}}"> Upload-File</a>
 </div>
 <body>
   {% block content %}
