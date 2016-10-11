@@ -16,10 +16,12 @@ app = Flask(__name__)
 sess = Session()
 
 def allowed_file(filename):
+    # checks to see if an uploaded file is of proper filetype
     return '.' in filename and \
            filename.rsplit('.', 1)[1] in ALLOWED_EXTENSIONS
 
 def build_scored_df(filename, rescore=None):
+    # builds the scored dataframe
     df = pd.read_excel(filename, index_col = 0, header = 0)
     if df['pre_weight'].empty == False and \
        df['post_weight'].empty == False:
@@ -40,10 +42,12 @@ def build_scored_df(filename, rescore=None):
 @app.route('/', methods = ['GET'])
 @app.route('/home', methods = ['GET'])
 def home():
+    # site home page
     return render_template('home.html')
 
 @app.route('/upload', methods=['GET','POST'])
 def upload():
+    # page to upload file to be scored
     if request.method == 'POST':
         if 'file' not in request.files:
             flash('file upload problem, please retry')
@@ -70,10 +74,13 @@ def upload():
 
 @app.route('/results', methods=['GET'])
 def results():
+    # page to process uploaded file and display results
     UPLOAD_FOLDER = session.get('UPLOAD_FOLDER')
     name = session.get('filename')
     rescore = session.get('rescore')
     path = UPLOAD_FOLDER + '/' + name
+    # use try/except here since file is deleted immediatly after being processed
+    # if user try's to reload it will redirect them to upload page
     try:
         scored_df = build_scored_df(path, rescore = rescore)
         save_name = 'scored_{}.csv'.format(name[:-5])
@@ -89,6 +96,7 @@ def results():
 
 @app.route('/download', methods = ['GET', 'POST'])
 def download():
+    # download page to download template and example files
     if request.method == 'POST':
         if request.form['submit'] == 'download example':
             return send_file('test_files/test.xlsx',
@@ -101,6 +109,7 @@ def download():
 
 @app.route('/download_results', methods = ['GET', 'POST'])
 def download_results():
+    # download page to download results
     scored_path = session.get('scored_path')
     scored_name = session.get('scored_filename')
     return send_file(scored_path,
