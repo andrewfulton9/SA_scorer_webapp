@@ -14,6 +14,10 @@ ALLOWED_EXTENSIONS = set(['xlsx', 'xlsm', 'xlt'])
 
 app = Flask(__name__)
 sess = Session()
+app.secret_key = os.environ['SA_SK']
+app.config['SESSION_TYPE'] = 'filesystem'
+
+sess.init_app(app)
 
 def allowed_file(filename):
     # checks to see if an uploaded file is of proper filetype
@@ -22,7 +26,7 @@ def allowed_file(filename):
 
 def build_scored_df(filename, rescore=None):
     # builds the scored dataframe
-    df = pd.read_excel(filename, index_col = 0, header = 0)
+    df = pd.read_csv(filename, index_col = 0, header = 0)
     if df['pre_weight'].empty == False and \
        df['post_weight'].empty == False:
         weight_percentage = df['post_weight'] / df['pre_weight']
@@ -60,8 +64,10 @@ def upload():
             if allowed_file(f.filename):
                 rescore = request.form['rescore']
                 filename = secure_filename(f.filename)
+                filename = filename.split('.')[0] + '.csv'
+                print '1: ', filename
                 print 'saving file'
-                UPLOAD_FOLDER = tempfile.mkdtemp()
+                UPLOAD_FOLDER = 'upload_folder'
                 session['UPLOAD_FOLDER'] = UPLOAD_FOLDER
                 session['filename'] = filename
                 session['rescore'] = rescore
@@ -76,13 +82,18 @@ def upload():
 def results():
     # page to process uploaded file and display results
     UPLOAD_FOLDER = session.get('UPLOAD_FOLDER')
+    print UPLOAD_FOLDER
     name = session.get('filename')
+    print name
     rescore = session.get('rescore')
     path = UPLOAD_FOLDER + '/' + name
+    print path
     # use try/except here since file is deleted immediatly after being processed
     # if user try's to reload it will redirect them to upload page
     try:
+        print 'trying'
         scored_df = build_scored_df(path, rescore = rescore)
+        print 'scored_df'
         save_name = 'scored_{}.csv'.format(name[:-5])
         saved_results = scored_df.to_csv(UPLOAD_FOLDER + '/' + save_name)
         session['scored_path'] = UPLOAD_FOLDER + '/' + save_name
@@ -120,9 +131,4 @@ def download_results():
 
 
 if __name__ == '__main__':
-    app.secret_key = os.environ['SA_SK']
-    app.config['SESSION_TYPE'] = 'filesystem'
-
-    sess.init_app(app)
-
     app.run()
