@@ -26,7 +26,7 @@ def allowed_file(filename):
 
 def build_scored_df(filename, rescore=None):
     # builds the scored dataframe
-    df = pd.read_csv(filename, index_col = 0, header = 0)
+    df = pd.read_excel(filename, index_col = 0, header = 0)
     if df['pre_weight'].empty == False and \
        df['post_weight'].empty == False:
         weight_percentage = df['post_weight'] / df['pre_weight']
@@ -64,8 +64,6 @@ def upload():
             if allowed_file(f.filename):
                 rescore = request.form['rescore']
                 filename = secure_filename(f.filename)
-                filename = filename.split('.')[0] + '.csv'
-                print '1: ', filename
                 print 'saving file'
                 UPLOAD_FOLDER = 'upload_folder'
                 session['UPLOAD_FOLDER'] = UPLOAD_FOLDER
