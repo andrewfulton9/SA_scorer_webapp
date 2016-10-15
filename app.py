@@ -32,12 +32,15 @@ def build_scored_df(filename, rescore=None):
         weight_percentage = df['post_weight'] / df['pre_weight']
         weight_percentage.name = 'weight_percentage'
 
+    # handles rescoring
     if rescore == 'full':
         scored = sa(df)
     elif rescore == 'score_6':
         scored = sa(df, rescore6 = True)
     elif rescore == 'score_12':
         scored = sa(df, rescore12 = True)
+
+
 
     scored = pd.concat([df['group'], weight_percentage, scored], axis=1)
     scored = scored.dropna(thresh = 6, axis = 0)
