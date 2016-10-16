@@ -14,7 +14,11 @@ ALLOWED_EXTENSIONS = set(['xlsx', 'xlsm', 'xlt'])
 
 app = Flask(__name__)
 sess = Session()
-app.secret_key = os.environ['SA_SK']
+
+with open('key.json') as f:
+    key_file = json.load(f)
+
+app.secret_key = key_file['secret_key']
 app.config['SESSION_TYPE'] = 'filesystem'
 
 sess.init_app(app)
