@@ -9,11 +9,14 @@ from score_code import sa
 import tempfile
 import os
 import json
+import sys
 
 ALLOWED_EXTENSIONS = set(['xlsx', 'xlsm', 'xlt'])
 
 app = Flask(__name__)
 sess = Session()
+app.secret_key = '\xd9\x84\x1a\n\xf6\xaf\xde\xea\xae\xbe.j\xa6\xadi\xec\x83|\x86\xf0\xde\xa7\x07\xce'
+app.config['SESSION_TYPE'] = 'filesystem'
 
 def allowed_file(filename):
     # checks to see if an uploaded file is of proper filetype
@@ -22,7 +25,7 @@ def allowed_file(filename):
 
 def build_scored_df(filename, rescore=None):
     # builds the scored dataframe
-    df = pd.read_excel(filename, index_col = 0, header = 0)
+    df = pd.read_excel(filename, 'Sheet1', index_col = 0, header = 0)
     if df['pre_weight'].empty == False and \
        df['post_weight'].empty == False:
         weight_percentage = df['post_weight'] / df['pre_weight']
@@ -35,7 +38,7 @@ def build_scored_df(filename, rescore=None):
     elif rescore == 'score_12':
         scored = sa(df, rescore12 = True)
 
-    scored = pd.concat([df['group'], weight_percentage, scored], axis=1)
+    scored = pd.concat([df['group'], weight_percentage,  scored], axis=1)
     scored = scored.dropna(thresh = 6, axis = 0)
     return scored
 
@@ -60,8 +63,7 @@ def upload():
             if allowed_file(f.filename):
                 rescore = request.form['rescore']
                 filename = secure_filename(f.filename)
-                print 'saving file'
-                UPLOAD_FOLDER = tempfile.mkdtemp()
+                UPLOAD_FOLDER = '/tmp'
                 session['UPLOAD_FOLDER'] = UPLOAD_FOLDER
                 session['filename'] = filename
                 session['rescore'] = rescore
@@ -89,7 +91,7 @@ def results():
         session['scored_filename'] = save_name
         os.remove(path)
         return render_template('results.html', name=name,
-                               f = scored_df.to_html())
+                                f = scored_df.to_html())
     except:
         flash('Please reupload file')
         return redirect(url_for('upload'))
@@ -120,8 +122,6 @@ def download_results():
 
 
 if __name__ == '__main__':
-    app.secret_key = os.environ['SA_SK']
-    app.config['SESSION_TYPE'] = 'filesystem'
 
     sess.init_app(app)
 
