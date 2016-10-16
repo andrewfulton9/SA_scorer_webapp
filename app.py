@@ -93,18 +93,23 @@ def results():
     print path
     # use try/except here since file is deleted immediatly after being processed
     # if user try's to reload it will redirect them to upload page
-    try:
-        print 'trying'
-        scored_df = build_scored_df(path, rescore = rescore)
-        print 'scored_df'
-        save_name = 'scored_{}.csv'.format(name[:-5])
-        saved_results = scored_df.to_csv(UPLOAD_FOLDER + '/' + save_name)
-        session['scored_path'] = UPLOAD_FOLDER + '/' + save_name
-        session['scored_filename'] = save_name
-        os.remove(path)
-        return render_template('results.html', name=name,
-                                f = scored_df.to_html())
-    except:
+    if os.path.exists(path):
+        try:
+            print 'trying'
+            scored_df = build_scored_df(path, rescore = rescore)
+            print 'scored_df'
+            save_name = 'scored_{}.csv'.format(name[:-5])
+            saved_results = scored_df.to_csv(UPLOAD_FOLDER + '/' + save_name)
+            session['scored_path'] = UPLOAD_FOLDER + '/' + save_name
+            session['scored_filename'] = save_name
+            os.remove(path)
+            return render_template('results.html', name=name,
+                                    f = scored_df.to_html())
+        except:
+            flash('Problem processing file. Please make \
+                   sure you are following template')
+            return redirect(url_for('upload'))
+    else:
         flash('Please reupload file')
         return redirect(url_for('upload'))
 
