@@ -18,6 +18,14 @@ sess = Session()
 app.secret_key = '\xd9\x84\x1a\n\xf6\xaf\xde\xea\xae\xbe.j\xa6\xadi\xec\x83|\x86\xf0\xde\xa7\x07\xce'
 app.config['SESSION_TYPE'] = 'filesystem'
 
+with open('key.json') as f:
+    key_file = json.load(f)
+
+app.secret_key = key_file['secret_key']
+app.config['SESSION_TYPE'] = 'filesystem'
+
+sess.init_app(app)
+
 def allowed_file(filename):
     # checks to see if an uploaded file is of proper filetype
     return '.' in filename and \
@@ -31,6 +39,7 @@ def build_scored_df(filename, rescore=None):
         weight_percentage = df['post_weight'] / df['pre_weight']
         weight_percentage.name = 'weight_percentage'
 
+    # handles rescoring
     if rescore == 'full':
         scored = sa(df)
     elif rescore == 'score_6':
@@ -38,7 +47,7 @@ def build_scored_df(filename, rescore=None):
     elif rescore == 'score_12':
         scored = sa(df, rescore12 = True)
 
-    scored = pd.concat([df['group'], weight_percentage,  scored], axis=1)
+    scored = pd.concat([df['group'], weight_percentage, scored], axis=1)
     scored = scored.dropna(thresh = 6, axis = 0)
     return scored
 
@@ -78,13 +87,18 @@ def upload():
 def results():
     # page to process uploaded file and display results
     UPLOAD_FOLDER = session.get('UPLOAD_FOLDER')
+    print UPLOAD_FOLDER
     name = session.get('filename')
+    print name
     rescore = session.get('rescore')
     path = UPLOAD_FOLDER + '/' + name
+    print path
     # use try/except here since file is deleted immediatly after being processed
     # if user try's to reload it will redirect them to upload page
     try:
+        print 'trying'
         scored_df = build_scored_df(path, rescore = rescore)
+        print 'scored_df'
         save_name = 'scored_{}.csv'.format(name[:-5])
         saved_results = scored_df.to_csv(UPLOAD_FOLDER + '/' + save_name)
         session['scored_path'] = UPLOAD_FOLDER + '/' + save_name
@@ -122,7 +136,5 @@ def download_results():
 
 
 if __name__ == '__main__':
-
     sess.init_app(app)
-
     app.run()
