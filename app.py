@@ -106,8 +106,8 @@ def results():
             return render_template('results.html', name=name,
                                     f = scored_df.to_html())
         except:
-            flash('Problem processing file. Please make \
-                   sure you are following template')
+            flash('error processing file. Please ensure you \
+                   are following template')
             return redirect(url_for('upload'))
     else:
         flash('Please reupload file')
