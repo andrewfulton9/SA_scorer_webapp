@@ -9,6 +9,7 @@ from score_code import sa
 import tempfile
 import os
 import json
+import sys
 
 ALLOWED_EXTENSIONS = set(['xlsx', 'xlsm', 'xlt'])
 
@@ -30,7 +31,7 @@ def allowed_file(filename):
 
 def build_scored_df(filename, rescore=None):
     # builds the scored dataframe
-    df = pd.read_excel(filename, index_col = 0, header = 0)
+    df = pd.read_excel(filename, 'Sheet1', index_col = 0, header = 0)
     if df['pre_weight'].empty == False and \
        df['post_weight'].empty == False:
         weight_percentage = df['post_weight'] / df['pre_weight']
@@ -43,8 +44,6 @@ def build_scored_df(filename, rescore=None):
         scored = sa(df, rescore6 = True)
     elif rescore == 'score_12':
         scored = sa(df, rescore12 = True)
-
-
 
     scored = pd.concat([df['group'], weight_percentage, scored], axis=1)
     scored = scored.dropna(thresh = 6, axis = 0)
@@ -71,8 +70,7 @@ def upload():
             if allowed_file(f.filename):
                 rescore = request.form['rescore']
                 filename = secure_filename(f.filename)
-                print 'saving file'
-                UPLOAD_FOLDER = 'upload_folder'
+                UPLOAD_FOLDER = '/tmp'
                 session['UPLOAD_FOLDER'] = UPLOAD_FOLDER
                 session['filename'] = filename
                 session['rescore'] = rescore
@@ -105,7 +103,7 @@ def results():
         session['scored_filename'] = save_name
         os.remove(path)
         return render_template('results.html', name=name,
-                               f = scored_df.to_html())
+                                f = scored_df.to_html())
     except:
         flash('Please reupload file')
         return redirect(url_for('upload'))
@@ -137,5 +135,4 @@ def download_results():
 
 if __name__ == '__main__':
     sess.init_app(app)
-
     app.run()
