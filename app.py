@@ -22,8 +22,6 @@ with open('/home/ubuntu/SA_scorer_webapp/key.json') as f:
 app.secret_key = key_file['secret_key']
 app.config['SESSION_TYPE'] = 'filesystem'
 
-sess.init_app(app)
-
 def allowed_file(filename):
     # checks to see if an uploaded file is of proper filetype
     return '.' in filename and \
