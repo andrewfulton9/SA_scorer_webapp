@@ -29,9 +29,21 @@ def allowed_file(filename):
     return '.' in filename and \
            filename.rsplit('.', 1)[1] in ALLOWED_EXTENSIONS
 
+def convert_index(df):
+    '''
+    input: dataframe
+    output: dataframe
+
+    changes index values to strings
+    '''
+    new_ix = [str(i) for i in df.index]
+    df.index = new_ix
+    return df
+
 def build_scored_df(filename, rescore=None):
     # builds the scored dataframe
     df = pd.read_excel(filename, 'Sheet1', index_col = 0, header = 0)
+    df = convert_index(df)
     if df['pre_weight'].empty == False and \
        df['post_weight'].empty == False:
         weight_percentage = df['post_weight'] / df['pre_weight']
@@ -140,4 +152,4 @@ def download_results():
 
 if __name__ == '__main__':
     sess.init_app(app)
-    app.run()
+    app.run(debug = True)
