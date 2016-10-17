@@ -43,7 +43,7 @@ def convert_index(df):
 def get_weight_perc(df):
     '''
     input: df
-    output: Series 
+    output: Series
 
     calculates weight percentages based on pre and post weights if in
     dataframe. Otherwise returns empty strings
