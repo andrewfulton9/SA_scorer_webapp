@@ -16,7 +16,7 @@ ALLOWED_EXTENSIONS = set(['xlsx', 'xlsm', 'xlt'])
 app = Flask(__name__)
 sess = Session()
 
-with open('/home/ubuntu/SA_scorer_web/key.json') as f:
+with open('/home/ubuntu/SA_scorer_webapp/key.json') as f:
     key_file = json.load(f)
 
 app.secret_key = key_file['secret_key']
