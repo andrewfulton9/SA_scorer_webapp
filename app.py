@@ -23,7 +23,12 @@ app.secret_key = key_file['secret_key']
 app.config['SESSION_TYPE'] = 'filesystem'
 
 def allowed_file(filename):
-    # checks to see if an uploaded file is of proper filetype
+    '''
+    input: filename
+    output: True or False
+
+    checks to make sure an uploaded file is included in allowed filenames
+    '''
     return '.' in filename and \
            filename.rsplit('.', 1)[1] in ALLOWED_EXTENSIONS
 
@@ -38,14 +43,28 @@ def convert_index(df):
     df.index = new_ix
     return df
 
+def get_weight_perc(df):
+    '''
+    input: df
+    output: Series
+
+    calculates weight percentages based on pre and post weights if in
+    dataframe. Otherwise returns empty strings
+    '''
+    if False in df['pre_weight'].isnull().values and \
+       False in df['post_weight'].isnull().values:
+        weight_percentage = df['post_weight'] / df['pre_weight']
+    else:
+        weight_percentage = pd.Series(['' for ix in df.index],
+                                      index = df.index)
+    weight_percentage.name = 'weight_percentage'
+    return weight_percentage
+
 def build_scored_df(filename, rescore=None):
     # builds the scored dataframe
     df = pd.read_excel(filename, 'Sheet1', index_col = 0, header = 0)
     df = convert_index(df)
-    if df['pre_weight'].empty == False and \
-       df['post_weight'].empty == False:
-        weight_percentage = df['post_weight'] / df['pre_weight']
-        weight_percentage.name = 'weight_percentage'
+    weight_percentage = get_weight_perc(df)
 
     # handles rescoring
     if rescore == 'full':
@@ -95,19 +114,14 @@ def upload():
 def results():
     # page to process uploaded file and display results
     UPLOAD_FOLDER = session.get('UPLOAD_FOLDER')
-    print UPLOAD_FOLDER
     name = session.get('filename')
-    print name
     rescore = session.get('rescore')
     path = UPLOAD_FOLDER + '/' + name
-    print path
     # use try/except here since file is deleted immediatly after being processed
     # if user try's to reload it will redirect them to upload page
     if os.path.exists(path):
         try:
-            print 'trying'
             scored_df = build_scored_df(path, rescore = rescore)
-            print 'scored_df'
             save_name = 'scored_{}.csv'.format(name[:-5])
             saved_results = scored_df.to_csv(UPLOAD_FOLDER + '/' + save_name)
             session['scored_path'] = UPLOAD_FOLDER + '/' + save_name
