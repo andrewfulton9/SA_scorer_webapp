@@ -25,7 +25,12 @@ app.config['SESSION_TYPE'] = 'filesystem'
 sess.init_app(app)
 
 def allowed_file(filename):
-    # checks to see if an uploaded file is of proper filetype
+    '''
+    input: filename
+    output: True or False
+
+    checks to make sure an uploaded file is included in allowed filenames
+    '''
     return '.' in filename and \
            filename.rsplit('.', 1)[1] in ALLOWED_EXTENSIONS
 
