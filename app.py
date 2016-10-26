@@ -62,11 +62,20 @@ def get_weight_perc(df):
     weight_percentage.name = 'weight_percentage'
     return weight_percentage
 
+def get_group(df):
+    if False in df['group'].isnull().values:
+        group = df['group']
+    else:
+        group = pd.Series(['' for ix in df.index], index = df.index)
+    group.name = 'group'
+    return group
+
 def build_scored_df(filename, rescore=None):
     # builds the scored dataframe
     df = pd.read_excel(filename, 'Sheet1', index_col = 0, header = 0)
     df = convert_index(df)
     weight_percentage = get_weight_perc(df)
+    group = get_group(df)
 
     # handles rescoring
     if rescore == 'full':
@@ -76,7 +85,7 @@ def build_scored_df(filename, rescore=None):
     elif rescore == 'score_12':
         scored = sa(df, rescore12 = True)
 
-    scored = pd.concat([df['group'], weight_percentage, scored], axis=1)
+    scored = pd.concat([group, weight_percentage, scored], axis=1)
     scored = scored.dropna(thresh = 6, axis = 0)
     return scored
 
