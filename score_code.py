@@ -4,6 +4,17 @@ import collections
 
 #function to score spontaneous alternation
 def sa(df, start = 1, rescore = 76, rescore6 = False, rescore12 = False, rescore18=False):
+    '''
+    input: df = dataframe with raw spontaneous alt data
+           start = arm to start scoring from
+           rescore = arm to stop scoring at
+           rescore6 = stop scoring at 6 min mark
+           rescore12 = stop scoring at 12 min mark
+           rescore18 = stop scoring at 18 min mark
+    output: a dataframe with the scored data
+
+    function to score a dataframe with raw spontaneous alternation data
+    '''
     df.columns = (str(column) for column in df.columns)
     start = str(start)
     rescore = str(rescore)
