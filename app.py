@@ -195,19 +195,19 @@ def download():
 @app.route('/download_results', methods = ['GET', 'POST'])
 def download_results():
     # download page to download results
-    scored_path = session.get('scored_path')
-    scored_name = session.get('scored_filename')
-    return send_file(scored_path,
-                     as_attachment = True,
-                     attachment_filename=scored_name)
-
-@app.route('/download_descr', methods = ['GET', 'POST'])
-def download_descr():
-    descr_path = session.get('described_path')
-    descr_name = session.get('described_filename')
-    return send_file(descr_path,
-                     as_attachment = True,
-                     attachment_filename = descr_name)
+    if request.method == 'POST':
+        if request.form['submit'] == 'download scored csv':
+            scored_path = session.get('scored_path')
+            scored_name = session.get('scored_filename')
+            return send_file(scored_path,
+                             as_attachment = True,
+                             attachment_filename=scored_name)
+        if request.form['submit'] == 'download descriptive csv':
+            descr_path = session.get('described_path')
+            descr_name = session.get('described_filename')
+            return send_file(descr_path,
+                             as_attachment = True,
+                             attachment_filename = descr_name)
 
 
 
