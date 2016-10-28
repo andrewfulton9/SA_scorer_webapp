@@ -5,6 +5,14 @@
     <p>{{ f | safe }} </p>
     <form action="/download_results" method='post' enctype=multipart/form-data>
       <input type='submit', value = 'download csv' >
+
+{% if describe %}
+  <br><br><br>
+  <h1> Descritive Statistics </h1>
+    <p>{{ f1 | safe }} </p>
+
+{% endif %}
+
 <br><br><br>
 <h3> Column Descriptions </h3>
 <div>

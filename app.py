@@ -151,16 +151,21 @@ def results():
     if os.path.exists(path):
         # try:
         scored_df, has_groups = build_scored_df(path, rescore = rescore)
-        if has_groups:
-            described = get_descriptive_stats(scored_df)
-            print described
         save_name = 'scored_{}.csv'.format(name[:-5])
         saved_results = scored_df.to_csv(UPLOAD_FOLDER + '/' + save_name)
         session['scored_path'] = UPLOAD_FOLDER + '/' + save_name
         session['scored_filename'] = save_name
         os.remove(path)
-        return render_template('results.html', name=name,
-                                f = scored_df.to_html())
+        if has_groups:
+            described = get_descriptive_stats(scored_df)
+            return render_template('results.html', name=name,
+                                   f = scored_df.to_html(),
+                                   f1 = described.to_html(),
+                                   describe = has_groups)
+        else:
+            return render_template('results.html', name=name,
+                                   f = scored_df.to_html(),
+                                   describe = has_groups)
         # except:
         #     flash('error processing file. Please ensure you \
         #            are following template')
