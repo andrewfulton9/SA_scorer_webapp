@@ -4,12 +4,14 @@
     <p>filename: {{ name }}</p>
     <p>{{ f | safe }} </p>
     <form action="/download_results" method='post' enctype=multipart/form-data>
-      <input type='submit', value = 'download csv' >
+      <input type='submit', name = 'submit', value = 'download scored csv' >
 
 {% if describe %}
   <br><br><br>
   <h3> Descritive Statistics </h3>
     <p>{{ f1 | safe }} </p>
+    <form action="/download_results" method='post' enctype=multipart/form-data>
+      <input type='submit', name = 'submit', value = 'download descriptive csv' >
 
 {% endif %}
 

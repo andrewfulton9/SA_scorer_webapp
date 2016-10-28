@@ -152,12 +152,16 @@ def results():
         try:
             scored_df, has_groups = build_scored_df(path, rescore = rescore)
             save_name = 'scored_{}.csv'.format(name[:-5])
-            saved_results = scored_df.to_csv(UPLOAD_FOLDER + '/' + save_name)
+            scored_df.to_csv(UPLOAD_FOLDER + '/' + save_name)
             session['scored_path'] = UPLOAD_FOLDER + '/' + save_name
             session['scored_filename'] = save_name
             os.remove(path)
             if has_groups:
                 described = get_descriptive_stats(scored_df)
+                ds_name = '{}_described.csv'.format(name[:-5])
+                described.to_csv(UPLOAD_FOLDER + '/' + ds_name)
+                session['described_path'] = UPLOAD_FOLDER + '/' + ds_name
+                session['described_filename'] = ds_name
                 return render_template('results.html', name=name,
                                        f = scored_df.to_html(),
                                        f1 = described.to_html(),
@@ -190,11 +194,19 @@ def download():
 @app.route('/download_results', methods = ['GET', 'POST'])
 def download_results():
     # download page to download results
-    scored_path = session.get('scored_path')
-    scored_name = session.get('scored_filename')
-    return send_file(scored_path,
-                     as_attachment = True,
-                     attachment_filename=scored_name)
+    if request.method == 'POST':
+        if request.form['submit'] == 'download scored csv':
+            scored_path = session.get('scored_path')
+            scored_name = session.get('scored_filename')
+            return send_file(scored_path,
+                             as_attachment = True,
+                             attachment_filename=scored_name)
+        if request.form['submit'] == 'download descriptive csv':
+            descr_path = session.get('described_path')
+            descr_name = session.get('described_filename')
+            return send_file(descr_path,
+                             as_attachment = True,
+                             attachment_filename = descr_name)
 
 
 
