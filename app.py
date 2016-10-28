@@ -63,24 +63,14 @@ def get_weight_perc(df):
     weight_percentage.name = 'weight_percentage'
     return weight_percentage
 
-def replace_nan(obj):
-    print obj
-    if obj != np.nan:
-        print 'not nan'
-        return obj
-    else:
-        print 'is nan'
-        return ''
-
 def get_group(df):
     if False in df['group'].isnull().values:
         group = df['group']
+        group = group.replace(np.nan, 'not in group')
         has_groups = True
     else:
         group = pd.Series(['' for ix in df.index], index = df.index)
         has_groups = False
-    group = group.replace(np.nan, 'not in group')
-    print group
     group.name = 'group'
     return group, has_groups
 
@@ -160,27 +150,27 @@ def results():
     # use try/except here since file is deleted immediatly after being processed
     # if user try's to reload it will redirect them to upload page
     if os.path.exists(path):
-        #try:
-        scored_df, has_groups = build_scored_df(path, rescore = rescore)
-        save_name = 'scored_{}.csv'.format(name[:-5])
-        saved_results = scored_df.to_csv(UPLOAD_FOLDER + '/' + save_name)
-        session['scored_path'] = UPLOAD_FOLDER + '/' + save_name
-        session['scored_filename'] = save_name
-        os.remove(path)
-        if has_groups:
-            described = get_descriptive_stats(scored_df)
-            return render_template('results.html', name=name,
-                                   f = scored_df.to_html(),
-                                   f1 = described.to_html(),
-                                   describe = has_groups)
-        else:
-            return render_template('results.html', name=name,
-                                   f = scored_df.to_html(),
-                                   describe = has_groups)
-        # except:
-        #     flash('error processing file. Please ensure you \
-        #            are following template')
-        #     return redirect(url_for('upload'))
+        try:
+            scored_df, has_groups = build_scored_df(path, rescore = rescore)
+            save_name = 'scored_{}.csv'.format(name[:-5])
+            saved_results = scored_df.to_csv(UPLOAD_FOLDER + '/' + save_name)
+            session['scored_path'] = UPLOAD_FOLDER + '/' + save_name
+            session['scored_filename'] = save_name
+            os.remove(path)
+            if has_groups:
+                described = get_descriptive_stats(scored_df)
+                return render_template('results.html', name=name,
+                                       f = scored_df.to_html(),
+                                       f1 = described.to_html(),
+                                       describe = has_groups)
+            else:
+                return render_template('results.html', name=name,
+                                       f = scored_df.to_html(),
+                                       describe = has_groups)
+        except:
+            flash('error processing file. Please ensure you \
+                   are following template')
+            return redirect(url_for('upload'))
     else:
         flash('Please reupload file')
         return redirect(url_for('upload'))
