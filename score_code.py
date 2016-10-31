@@ -5,44 +5,44 @@ import collections
 
 class ScoreSA(object):
 
-    def __init__(filename, rescore):
+    def __init__(self, filename, rescore):
         self.filename = filename
         self.rescore = rescore
         self.raw_df = self.build_raw_df()
         self._has_groups = False
         self.scored_df = self.build_scored_df()
-        self.described_df = self.get_descriptive_stats()
+        self.descriptive_df = self.get_descriptive_stats()
 
-    def build_raw_df():
+    def build_raw_df(self):
         df = pd.read_excel(self.filename, index_col=0, header = 0)
         df.columns = (str(column) for column in df.columns)
         df = self.convert_index(df)
         return df
 
-    def build_scored_df():
+    def build_scored_df(self):
         # builds the scored dataframe
         weight_percentage = self.get_weight_perc(self.raw_df)
-        group, has_groups = self.get_group(self.raw_df)
+        group = self.get_group(self.raw_df)
 
         # handles rescoring
         if self.rescore == 'full':
-            scored = self.score(self.raw_df)
+            scored = self.score()
         elif self.rescore == 'score_6':
-            scored = self.score(self.raw_df, rescore6 = True)
+            scored = self.score(rescore6 = True)
         elif self.rescore == 'score_12':
-            scored = self.score(self.raw_df, rescore12 = True)
+            scored = self.score(rescore12 = True)
 
         scored = pd.concat([group, weight_percentage, scored], axis=1)
         scored = scored.dropna(thresh = 6, axis = 0)
         return scored
 
-    def get_descriptive_stats():
+    def get_descriptive_stats(self):
         grouped = self.scored_df.groupby('group').describe()
-        grouped = stdev_2_stderror(grouped)
+        grouped = self.stdev_2_stderror(grouped)
         return grouped
 
     #function to score spontaneous alternation
-    def score(start = 1, rescore = 76, rescore6 = False, rescore12 = False):
+    def score(self, start = 1, rescore = 76, rescore6 = False, rescore12 = False):
         start = str(start)
         rescore = str(rescore)
 
@@ -74,7 +74,8 @@ class ScoreSA(object):
                 except:
                     rescore = None
 
-            drop = self.raw_df.loc[:, start:rescore].ix[index].dropna(how='all')
+            if rescore:
+                drop = self.raw_df.loc[index, start:rescore].dropna(how='all')
 
             if len(drop) > 4:
                 alts = 0
@@ -115,7 +116,7 @@ class ScoreSA(object):
         return infoframe.astype(float)
 
 
-    def convert_index(df):
+    def convert_index(self, df):
         '''
         input: dataframe
         output: dataframe
@@ -126,7 +127,7 @@ class ScoreSA(object):
         df.index = new_ix
         return df
 
-    def get_weight_perc(df):
+    def get_weight_perc(self, df):
         '''
         input: df
         output: Series
@@ -143,7 +144,7 @@ class ScoreSA(object):
         weight_percentage.name = 'weight_percentage'
         return weight_percentage
 
-    def get_group(df):
+    def get_group(self, df):
         if False in df['group'].isnull().values:
             group = df['group']
             group = group.replace(np.nan, 'not in group')
@@ -154,7 +155,7 @@ class ScoreSA(object):
         group.name = 'group'
         return group
 
-    def stdev_2_stderror(describe_df):
+    def stdev_2_stderror(self, describe_df):
         dt = describe_df.T.copy()
         for x in dt.columns.levels[0]:
             count = dt[x]['count'][0]
