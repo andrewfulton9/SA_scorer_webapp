@@ -11,7 +11,8 @@ class ScoreSA(object):
         self.raw_df = self.build_raw_df()
         self._has_groups = False
         self.scored_df = self.build_scored_df()
-        self.descriptive_df = self.get_descriptive_stats()
+        if self._has_groups:
+            self.descriptive_df = self.get_descriptive_stats()
 
     def build_raw_df(self):
         df = pd.read_excel(self.filename, index_col=0, header = 0)
