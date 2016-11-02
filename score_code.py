@@ -5,21 +5,29 @@ import collections
 
 class ScoreSA(object):
 
-    def __init__(self, filename, rescore):
+    def __init__(self, filename = None,
+                 rescore = None, upload_folder = None):
         self.filename = filename
         self.rescore = rescore
+        self.upload_folder = upload_folder
+        self.basename = self.get_base_filename()
+        self.path = self.get_path()
+        self.scored_save_name = self.scored_save_name()
+        self.scored_save_path = self.scored_save_path()
         self.raw_df = self.build_raw_df()
-        self._has_groups = False
+        self.has_groups = False
         self.scored_df = self.build_scored_df()
-        if self._has_groups:
-            self.descriptive_df = self.get_descriptive_stats()
+        if self.has_groups:
+            self.descriptive_save_name = self.descriptive_save_name()
+            self.descriptive_save_path = self.descriptive_save_path()
+            self.descriptive = self.get_descriptive_stats()
 
     def build_raw_df(self):
         '''
 
         turns excel file into pandas dataframe
         '''
-        df = pd.read_excel(self.filename, index_col=0, header = 0)
+        df = pd.read_excel(self.get_path(), index_col=0, header = 0)
         df.columns = (str(column) for column in df.columns)
         df = self.convert_index(df)
         return df
@@ -30,6 +38,7 @@ class ScoreSA(object):
         scored raw df and adds weight percentage and group to new scored df
         '''
         # builds the scored dataframe
+        self.raw_df = self.build_raw_df()
         weight_percentage = self.get_weight_perc(self.raw_df)
         group = self.get_group(self.raw_df)
 
@@ -43,6 +52,7 @@ class ScoreSA(object):
 
         scored = pd.concat([group, weight_percentage, scored], axis=1)
         scored = scored.dropna(thresh = 6, axis = 0)
+        self.scored_df = scored
         return scored
 
     def get_descriptive_stats(self):
@@ -161,10 +171,10 @@ class ScoreSA(object):
         if False in df['group'].isnull().values:
             group = df['group']
             group = group.replace(np.nan, 'not in group')
-            self._has_groups = True
+            self.has_groups = True
         else:
             group = pd.Series(['' for ix in df.index], index = df.index)
-            self._has_groups = False
+            self.has_groups = False
         group.name = 'group'
         return group
 
@@ -177,3 +187,36 @@ class ScoreSA(object):
         new_levels = [name if name != 'std' else 'sterr' for name in dt.columns.levels[1]]
         dt.columns.set_levels(new_levels, level=1, inplace = True)
         return dt.T
+
+    def get_path(self):
+        if self.upload_folder:
+            return self.upload_folder + '/' + self.filename
+        else:
+            return self.filename
+
+    def get_base_filename(self):
+        return self.filename.split('.')[0]
+
+    def scored_save_name(self):
+        return 'scored_{}.csv'.format(self.basename)
+
+    def scored_save_path(self):
+        if self.upload_folder:
+            return self.upload_folder + '/' + self.scored_save_name
+        else:
+            return self.scored_save_name
+
+    def descriptive_save_name(self):
+        return 'descriptive_{}.csv'.format(self.basename)
+
+    def descriptive_save_path(self):
+        if self.upload_folder:
+            return self.upload_folder + '/' + self.descriptive_save_name
+        else:
+            return self.descriptive_save_name
+
+    def save_scored(self):
+        self.scored_df.to_csv(self.scored_save_path)
+
+    def save_descriptive(self):
+        self.descriptive.to_csv(self.descriptive_save_path)

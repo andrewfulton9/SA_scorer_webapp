@@ -5,7 +5,7 @@ from flask.ext.session import Session
 from werkzeug.utils import secure_filename
 import cPickle as pickle
 import pandas as pd
-from score_code import sa
+from score_code import ScoreSA
 import tempfile
 import os
 import json
@@ -60,6 +60,7 @@ def upload():
                 session['UPLOAD_FOLDER'] = UPLOAD_FOLDER
                 session['filename'] = filename
                 session['rescore'] = rescore
+
                 f.save(os.path.join(UPLOAD_FOLDER, filename))
                 return redirect(url_for('results'))
             else:
@@ -73,35 +74,34 @@ def results():
     UPLOAD_FOLDER = session.get('UPLOAD_FOLDER')
     name = session.get('filename')
     rescore = session.get('rescore')
-    path = UPLOAD_FOLDER + '/' + name
+
+    info = ScoreSA(filename = name, upload_folder = UPLOAD_FOLDER, rescore = rescore)
+
     # use try/except here since file is deleted immediatly after being processed
     # if user try's to reload it will redirect them to upload page
-    if os.path.exists(path):
-        try:
-            scored_df, has_groups = build_scored_df(path, rescore = rescore)
-            save_name = 'scored_{}.csv'.format(name[:-5])
-            scored_df.to_csv(UPLOAD_FOLDER + '/' + save_name)
-            session['scored_path'] = UPLOAD_FOLDER + '/' + save_name
-            session['scored_filename'] = save_name
-            os.remove(path)
-            if has_groups:
-                described = get_descriptive_stats(scored_df)
-                ds_name = '{}_described.csv'.format(name[:-5])
-                described.to_csv(UPLOAD_FOLDER + '/' + ds_name)
-                session['described_path'] = UPLOAD_FOLDER + '/' + ds_name
-                session['described_filename'] = ds_name
-                return render_template('results.html', name=name,
-                                       f = scored_df.to_html(),
-                                       f1 = described.to_html(),
-                                       describe = has_groups)
-            else:
-                return render_template('results.html', name=name,
-                                       f = scored_df.to_html(),
-                                       describe = has_groups)
-        except:
-            flash('error processing file. Please ensure you \
-                   are following template')
-            return redirect(url_for('upload'))
+    if os.path.exists(info.path):
+        #try:
+            # trying with class
+        info.save_scored()
+        session['scored_path'] = info.scored_save_path
+        session['scored_filename'] = info.scored_save_name
+        os.remove(info.path)
+        if info.has_groups:
+            info.save_descriptive()
+            session['described_path'] = info.descriptive_save_path
+            session['described_filename'] = info.descriptive_save_name
+            return render_template('results.html', name=name,
+                                   f = info.scored_df.to_html(),
+                                   f1 = info.descriptive.to_html(),
+                                   describe = info.has_groups)
+        else:
+            return render_template('results.html', name=name,
+                                   f = info.scored_df.to_html(),
+                                   describe = info.has_groups)
+        # except:
+        #     flash('error processing file. Please ensure you \
+        #            are following template')
+        #     return redirect(url_for('upload'))
     else:
         flash('Please reupload file')
         return redirect(url_for('upload'))
