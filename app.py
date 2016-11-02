@@ -78,28 +78,27 @@ def results():
     # use try/except here since file is deleted immediatly after being processed
     # if user try's to reload it will redirect them to upload page
     if os.path.exists(info.path):
-        #try:
-            # trying with class
-        info.save_scored()
-        session['scored_path'] = info.scored_save_path
-        session['scored_filename'] = info.scored_save_name
-        os.remove(info.path)
-        if info.has_groups:
-            info.save_descriptive()
-            session['described_path'] = info.descriptive_save_path
-            session['described_filename'] = info.descriptive_save_name
-            return render_template('results.html', name=name,
-                                   f = info.scored_df.to_html(),
-                                   f1 = info.descriptive.to_html(),
-                                   describe = info.has_groups)
-        else:
-            return render_template('results.html', name=name,
-                                   f = info.scored_df.to_html(),
-                                   describe = info.has_groups)
-        # except:
-        #     flash('error processing file. Please ensure you \
-        #            are following template')
-        #     return redirect(url_for('upload'))
+        try:
+            info.save_scored()
+            session['scored_path'] = info.scored_save_path
+            session['scored_filename'] = info.scored_save_name
+            os.remove(info.path)
+            if info.has_groups:
+                info.save_descriptive()
+                session['described_path'] = info.descriptive_save_path
+                session['described_filename'] = info.descriptive_save_name
+                return render_template('results.html', name=name,
+                                       f = info.scored_df.to_html(),
+                                       f1 = info.descriptive.to_html(),
+                                       describe = info.has_groups)
+            else:
+                return render_template('results.html', name=name,
+                                       f = info.scored_df.to_html(),
+                                       describe = info.has_groups)
+        except:
+            flash('error processing file. Please ensure you \
+                   are following template')
+            return redirect(url_for('upload'))
     else:
         flash('Please reupload file')
         return redirect(url_for('upload'))
