@@ -15,12 +15,20 @@ class ScoreSA(object):
             self.descriptive_df = self.get_descriptive_stats()
 
     def build_raw_df(self):
+        '''
+
+        turns excel file into pandas dataframe
+        '''
         df = pd.read_excel(self.filename, index_col=0, header = 0)
         df.columns = (str(column) for column in df.columns)
         df = self.convert_index(df)
         return df
 
     def build_scored_df(self):
+        '''
+
+        scored raw df and adds weight percentage and group to new scored df
+        '''
         # builds the scored dataframe
         weight_percentage = self.get_weight_perc(self.raw_df)
         group = self.get_group(self.raw_df)
@@ -38,6 +46,10 @@ class ScoreSA(object):
         return scored
 
     def get_descriptive_stats(self):
+        '''
+
+        gets descriptive stats from scored df
+        '''
         grouped = self.scored_df.groupby('group').describe()
         grouped = self.stdev_2_stderror(grouped)
         return grouped
