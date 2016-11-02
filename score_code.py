@@ -62,7 +62,8 @@ class ScoreSA(object):
         '''
         grouped = self.scored_df.groupby('group').describe()
         grouped = self.stdev_2_stderror(grouped)
-        return grouped
+        columns = [col for col in self.scored_df.columns if col in grouped.columns]
+        return grouped[columns]
 
     #function to score spontaneous alternation
     def score(self, start = 1, rescore = 76, rescore6 = False, rescore12 = False):
