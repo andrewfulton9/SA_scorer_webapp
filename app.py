@@ -56,10 +56,12 @@ def upload():
             if allowed_file(f.filename):
                 rescore = request.form['rescore']
                 filename = secure_filename(f.filename)
-                UPLOAD_FOLDER = '/tmp'
+                UPLOAD_FOLDER = tempfile.mkdtemp()
                 session['UPLOAD_FOLDER'] = UPLOAD_FOLDER
                 session['filename'] = filename
                 session['rescore'] = rescore
+
+                print UPLOAD_FOLDER
 
                 f.save(os.path.join(UPLOAD_FOLDER, filename))
                 return redirect(url_for('results'))
