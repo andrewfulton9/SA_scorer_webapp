@@ -1,16 +1,11 @@
-import os
 from flask import Flask, flash, render_template, request, redirect, \
                   url_for, session, send_file
 from flask.ext.session import Session
 from werkzeug.utils import secure_filename
-import cPickle as pickle
-import pandas as pd
 from score_code import ScoreSA
 import tempfile
 import os
 import json
-import sys
-import numpy as np
 
 ALLOWED_EXTENSIONS = set(['xlsx', 'xlsm', 'xlt'])
 
