@@ -67,6 +67,10 @@ class ScoreSA(object):
 
     #function to score spontaneous alternation
     def score(self, start = 1, rescore = 76, rescore6 = False, rescore12 = False):
+        '''
+
+        function to score spontaneous alternation and place results into a dataframe
+        '''
         start = str(start)
         rescore = str(rescore)
 
@@ -169,6 +173,10 @@ class ScoreSA(object):
         return weight_percentage
 
     def get_group(self, df):
+        '''
+
+        determines if dataframe of raw data has groups
+        '''
         if False in df['group'].isnull().values:
             group = df['group']
             group = group.replace(np.nan, 'not in group')
@@ -180,6 +188,11 @@ class ScoreSA(object):
         return group
 
     def stdev_2_stderror(self, describe_df):
+        '''
+
+        calculates standard error from standard deviation and replaces standard
+        deviation in descriptive df
+        '''
         dt = describe_df.T.copy()
         for x in dt.columns.levels[0]:
             count = dt[x]['count'][0]
@@ -190,34 +203,66 @@ class ScoreSA(object):
         return dt.T
 
     def get_path(self):
+        '''
+
+        gets path for where uploaded file is downloaded to
+        '''
         if self.upload_folder:
             return self.upload_folder + '/' + self.filename
         else:
             return self.filename
 
     def get_base_filename(self):
+        '''
+
+        gets the base filename for the uploaded folder
+        '''
         return self.filename.split('.')[0]
 
     def scored_save_name(self):
+        '''
+
+        builds name for where the scored dataframe is saved as
+        '''
         return 'scored_{}.csv'.format(self.basename)
 
     def scored_save_path(self):
+        '''
+
+        buildes path for where the scored dataframe is saved to
+        '''
         if self.upload_folder:
             return self.upload_folder + '/' + self.scored_save_name
         else:
             return self.scored_save_name
 
     def descriptive_save_name(self):
+        '''
+
+        builds name for where descriptive dataframe is saved as
+        '''
         return 'descriptive_{}.csv'.format(self.basename)
 
     def descriptive_save_path(self):
+        '''
+
+        builds path for where descriptive dataframe is saved to
+        '''
         if self.upload_folder:
             return self.upload_folder + '/' + self.descriptive_save_name
         else:
             return self.descriptive_save_name
 
     def save_scored(self):
+        '''
+
+        saves scored dataframe as csv
+        '''
         self.scored_df.to_csv(self.scored_save_path)
 
     def save_descriptive(self):
+        '''
+
+        saves descriptive dataframe as csv
+        '''
         self.descriptive.to_csv(self.descriptive_save_path)
