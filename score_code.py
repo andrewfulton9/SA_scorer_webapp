@@ -56,6 +56,8 @@ class ScoreSA(object):
 
     def get_descriptive_stats(self):
         '''
+        input: none
+        output: dataframe with scored data
 
         gets descriptive stats from scored df
         '''
@@ -66,6 +68,10 @@ class ScoreSA(object):
 
     #function to score spontaneous alternation
     def score(self, start = 1, rescore = 76, rescore6 = False, rescore12 = False):
+        '''
+
+        function to score spontaneous alternation and place results into a dataframe
+        '''
         start = str(start)
         rescore = str(rescore)
 
@@ -169,7 +175,10 @@ class ScoreSA(object):
 
     def get_group(self, df):
         '''
-        used to determine if file includes group and transform null values
+        input: raw dataframe
+        output: series with updated groups
+
+        determines if dataframe of raw data has groups
         '''
         if False in df['group'].isnull().values:
             group = df['group']
@@ -183,8 +192,12 @@ class ScoreSA(object):
 
     def stdev_2_stderror(self, describe_df):
         '''
+        input: descriptive dataframe
+        output: descriptive dataframe with standard error in place of standard
+                deviation
 
-        calculates the standard error from standard deviation and replaces it
+        calculates standard error from standard deviation and replaces standard
+        deviation in descriptive df
         '''
         dt = describe_df.T.copy()
         for x in dt.columns.levels[0]:
@@ -197,8 +210,10 @@ class ScoreSA(object):
 
     def get_path(self):
         '''
+        input: None
+        output: path where uploaded file was saved
 
-        builds the path where files are downloaded too and uploaded from
+        gets path for where uploaded file is downloaded to
         '''
         if self.upload_folder:
             return self.upload_folder + '/' + self.filename
@@ -207,22 +222,28 @@ class ScoreSA(object):
 
     def get_base_filename(self):
         '''
+        input: None
+        output: basefilename for uploaded file
 
-        gets the filename without the format
+        gets the base filename for the uploaded folder
         '''
         return self.filename.split('.')[0]
 
     def scored_save_name(self):
         '''
+        input: None
+        output: name to save scored dataframe as
 
-        builds the name that the scored df is saved under
+        builds name for where the scored dataframe is saved as
         '''
         return 'scored_{}.csv'.format(self.basename)
 
     def scored_save_path(self):
         '''
+        input: None
+        output: path to save descriptive dataframe to
 
-        builds the path that the scored df is saved under
+        buildes path for where the scored dataframe is saved to
         '''
         if self.upload_folder:
             return self.upload_folder + '/' + self.scored_save_name
@@ -231,15 +252,19 @@ class ScoreSA(object):
 
     def descriptive_save_name(self):
         '''
+        input: None
+        output: name to save descriptive df as
 
-        builds the name that the descriptive df is saved under
+        builds name for where descriptive dataframe is saved as
         '''
         return 'descriptive_{}.csv'.format(self.basename)
 
     def descriptive_save_path(self):
         '''
+        input: None
+        output: path to save descriptive dataframe to
 
-        builds the path that the descriptive df is saved under
+        builds path for where descriptive dataframe is saved to
         '''
         if self.upload_folder:
             return self.upload_folder + '/' + self.descriptive_save_name
@@ -248,14 +273,18 @@ class ScoreSA(object):
 
     def save_scored(self):
         '''
+        input: None
+        output: None
 
-        saves the scored df
+        saves scored dataframe as csv
         '''
         self.scored_df.to_csv(self.scored_save_path)
 
     def save_descriptive(self):
         '''
+        input: None
+        output: None
 
-        saved the descriptive df
+        saves descriptive dataframe as csv
         '''
         self.descriptive.to_csv(self.descriptive_save_path)
