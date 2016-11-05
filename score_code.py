@@ -168,6 +168,9 @@ class ScoreSA(object):
         return weight_percentage
 
     def get_group(self, df):
+        '''
+        used to determine if file includes group and transform null values
+        '''
         if False in df['group'].isnull().values:
             group = df['group']
             group = group.replace(np.nan, 'not in group')
@@ -179,6 +182,10 @@ class ScoreSA(object):
         return group
 
     def stdev_2_stderror(self, describe_df):
+        '''
+
+        calculates the standard error from standard deviation and replaces it
+        '''
         dt = describe_df.T.copy()
         for x in dt.columns.levels[0]:
             count = dt[x]['count'][0]
@@ -189,34 +196,66 @@ class ScoreSA(object):
         return dt.T
 
     def get_path(self):
+        '''
+
+        builds the path where files are downloaded too and uploaded from
+        '''
         if self.upload_folder:
             return self.upload_folder + '/' + self.filename
         else:
             return self.filename
 
     def get_base_filename(self):
+        '''
+
+        gets the filename without the format
+        '''
         return self.filename.split('.')[0]
 
     def scored_save_name(self):
+        '''
+
+        builds the name that the scored df is saved under
+        '''
         return 'scored_{}.csv'.format(self.basename)
 
     def scored_save_path(self):
+        '''
+
+        builds the path that the scored df is saved under
+        '''
         if self.upload_folder:
             return self.upload_folder + '/' + self.scored_save_name
         else:
             return self.scored_save_name
 
     def descriptive_save_name(self):
+        '''
+
+        builds the name that the descriptive df is saved under
+        '''
         return 'descriptive_{}.csv'.format(self.basename)
 
     def descriptive_save_path(self):
+        '''
+
+        builds the path that the descriptive df is saved under
+        '''
         if self.upload_folder:
             return self.upload_folder + '/' + self.descriptive_save_name
         else:
             return self.descriptive_save_name
 
     def save_scored(self):
+        '''
+
+        saves the scored df
+        '''
         self.scored_df.to_csv(self.scored_save_path)
 
     def save_descriptive(self):
+        '''
+
+        saved the descriptive df
+        '''
         self.descriptive.to_csv(self.descriptive_save_path)
