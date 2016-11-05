@@ -57,6 +57,8 @@ class ScoreSA(object):
 
     def get_descriptive_stats(self):
         '''
+        input: none
+        output: dataframe with scored data
 
         gets descriptive stats from scored df
         '''
@@ -174,6 +176,8 @@ class ScoreSA(object):
 
     def get_group(self, df):
         '''
+        input: raw dataframe
+        output: series with updated groups
 
         determines if dataframe of raw data has groups
         '''
@@ -189,6 +193,9 @@ class ScoreSA(object):
 
     def stdev_2_stderror(self, describe_df):
         '''
+        input: descriptive dataframe
+        output: descriptive dataframe with standard error in place of standard
+                deviation
 
         calculates standard error from standard deviation and replaces standard
         deviation in descriptive df
@@ -204,6 +211,8 @@ class ScoreSA(object):
 
     def get_path(self):
         '''
+        input: None
+        output: path where uploaded file was saved
 
         gets path for where uploaded file is downloaded to
         '''
@@ -214,6 +223,8 @@ class ScoreSA(object):
 
     def get_base_filename(self):
         '''
+        input: None
+        output: basefilename for uploaded file
 
         gets the base filename for the uploaded folder
         '''
@@ -221,6 +232,8 @@ class ScoreSA(object):
 
     def scored_save_name(self):
         '''
+        input: None
+        output: name to save scored dataframe as
 
         builds name for where the scored dataframe is saved as
         '''
@@ -228,6 +241,8 @@ class ScoreSA(object):
 
     def scored_save_path(self):
         '''
+        input: None
+        output: path to save descriptive dataframe to
 
         buildes path for where the scored dataframe is saved to
         '''
@@ -238,6 +253,8 @@ class ScoreSA(object):
 
     def descriptive_save_name(self):
         '''
+        input: None
+        output: name to save descriptive df as
 
         builds name for where descriptive dataframe is saved as
         '''
@@ -245,6 +262,8 @@ class ScoreSA(object):
 
     def descriptive_save_path(self):
         '''
+        input: None
+        output: path to save descriptive dataframe to
 
         builds path for where descriptive dataframe is saved to
         '''
@@ -255,6 +274,8 @@ class ScoreSA(object):
 
     def save_scored(self):
         '''
+        input: None
+        output: None
 
         saves scored dataframe as csv
         '''
@@ -262,6 +283,8 @@ class ScoreSA(object):
 
     def save_descriptive(self):
         '''
+        input: None
+        output: None
 
         saves descriptive dataframe as csv
         '''
