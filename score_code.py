@@ -4,7 +4,12 @@ import collections
 
 
 class ScoreSA(object):
-
+    '''
+    input:
+        filename = name of uploaded filename
+        rescore = value at which to score
+        upload_folder = folder where uploaded file is saved
+    '''
     def __init__(self, filename = None,
                  rescore = None, upload_folder = None):
         self.filename = filename
@@ -24,6 +29,8 @@ class ScoreSA(object):
 
     def build_raw_df(self):
         '''
+        input: None
+        output: df of raw data from uploaded file
 
         turns excel file into pandas dataframe
         '''
@@ -34,6 +41,8 @@ class ScoreSA(object):
 
     def build_scored_df(self):
         '''
+        input: None
+        output: df of scored data
 
         scored raw df and adds weight percentage and group to new scored df
         '''
@@ -58,7 +67,7 @@ class ScoreSA(object):
     def get_descriptive_stats(self):
         '''
         input: none
-        output: dataframe with scored data
+        output: dataframe with descriptive data
 
         gets descriptive stats from scored df
         '''
